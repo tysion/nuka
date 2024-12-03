@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cryptopp/aes.h>
 #include <userver/utils/span.hpp>
 
 #include <array>
@@ -13,23 +14,17 @@ public:
     template <typename T>
     using Span = userver::utils::span<T>;
 
-    static constexpr int kAesKeyLength = 16;
-    static constexpr int kAesBlockSize = 16;
+    static constexpr int kAesKeyLength = CryptoPP::AES::DEFAULT_KEYLENGTH;
+    static constexpr int kAesBlockSize = CryptoPP::AES::BLOCKSIZE;
 
     // Шифрование: plaintext -> ciphertext (результат помещается в заранее выделенную область)
-    void Encrypt(Span<const uint8_t> plaintext, Span<uint8_t> ciphertext) const;
+    void Encrypt(Span<const uint8_t> plaintext, Span<const uint8_t> iv, Span<uint8_t> ciphertext) const;
 
     // Дешифрование: ciphertext -> plaintext (результат помещается в заранее выделенную область)
-    void Decrypt(Span<const uint8_t> ciphertext, Span<uint8_t> plaintext) const;
-
-    void SetInitializationVector(Span<const uint8_t> iv);
-
-    static std::array<uint8_t, kAesBlockSize> GenerateAesInitializationVector();
+    void Decrypt(Span<const uint8_t> ciphertext, Span<const uint8_t> iv, Span<uint8_t> plaintext) const;
 
 private:
     const std::array<uint8_t, kAesKeyLength> key_;  // Ключ шифрования
-    std::array<uint8_t, kAesBlockSize> iv_;         // Вектор инициализации
-    bool iv_set_ = false;
 };
 
 }  // namespace nuka::crypto
