@@ -227,6 +227,7 @@ void Server::HandleClient(userver::engine::io::Socket client_socket) {
                 bytes_received = client_socket.ReadAll(ipv6_address.data(), ipv6_address.size(), deadline);
                 target_address = FormatIPv6(ipv6_address);
                 LOG_DEBUG() << "Target address (IPv6): " << target_address;
+                break;
             }
             default: {
                 LOG_ERROR() << "Unsupported address type: " << static_cast<int>(address_type);
@@ -258,7 +259,7 @@ void Server::HandleClient(userver::engine::io::Socket client_socket) {
             try {
                 std::vector<uint8_t> buffer(4096);
                 while (true) {
-                    const auto bytes_received = client_socket.ReadSome(buffer.data(), buffer.size(), deadline);
+                    const auto bytes_received = client_socket.ReadSome(buffer.data(), buffer.size(), {});
                     if (bytes_received == 0) {
                         LOG_INFO() << "Connection closed by client";
                         break;
@@ -274,7 +275,7 @@ void Server::HandleClient(userver::engine::io::Socket client_socket) {
             try {
                 std::vector<uint8_t> buffer(4096);
                 while (true) {
-                    const auto bytes_received = target_socket.ReadSome(buffer.data(), buffer.size(), deadline);
+                    const auto bytes_received = target_socket.ReadSome(buffer.data(), buffer.size(), {});
                     if (bytes_received == 0) {
                         LOG_INFO() << "Connection closed by target";
                         break;

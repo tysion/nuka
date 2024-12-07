@@ -7,7 +7,7 @@
 int main(int argc, char* argv[]) {
     try {
         auto logger = userver::logging::MakeStdoutLogger(
-            "default", userver::logging::Format::kLtsv, userver::logging::Level::kDebug
+            "default", userver::logging::Format::kRaw, userver::logging::Level::kDebug
         );
         userver::logging::impl::SetDefaultLoggerRef(*logger);
 
