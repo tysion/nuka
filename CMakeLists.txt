@@ -4,7 +4,7 @@ project(nuka)
 set(CMAKE_CXX_STANDARD 20)
 
 # Adding userver dependency
-find_package(userver COMPONENTS core postgresql QUIET)
+find_package(userver COMPONENTS core QUIET)
 if(NOT userver_FOUND)  # Fallback to subdirectory usage
     # Enable userver libraries that are needed in this project
     set(USERVER_FEATURE_CRYPTOPP_BLAKE2 OFF CACHE BOOL "" FORCE)
@@ -23,10 +23,14 @@ userver_setup_environment()
 
 # Common sources
 add_library(${PROJECT_NAME}_objs OBJECT
-    src/socks5/server.cpp
+    src/net/ip.cpp
+    src/net/sockaddr.cpp
+    src/net/socket.cpp
+    src/net/socket.hpp
+    src/socks5/acceptor.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::core)
-target_include_directories(${PROJECT_NAME}_objs PRIVATE src)
+target_include_directories(${PROJECT_NAME}_objs PUBLIC src)
 
 
 # The Service
