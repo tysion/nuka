@@ -15,9 +15,10 @@ constexpr userver::utils::TrivialBiMap kColorSwitch = [](auto selector) {
 
 Socket::Socket(userver::engine::io::Socket socket, userver::engine::io::SocketType socket_type)
     : socket_{std::move(socket)}, socket_type_{socket_type} {
-    // UASSERT(socket.IsValid());
+    UASSERT(socket_.IsValid());
     log_extra_.Extend("fd", socket_.Fd());
-    log_extra_.Extend("address", socket_.Getsockname().PrimaryAddressString());
+    log_extra_.Extend("sockname", socket_.Getsockname().PrimaryAddressString());
+    log_extra_.Extend("peername", socket_.Getpeername().PrimaryAddressString());
     log_extra_.Extend("port", socket_.Getsockname().Port());
     log_extra_.Extend("type", std::string(kColorSwitch.TryFind(socket_type_).value_or("unknown")));
 }
